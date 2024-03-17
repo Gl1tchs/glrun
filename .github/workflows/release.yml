@@ -40,6 +40,6 @@ jobs:
 
     - name: Release
       uses: softprops/action-gh-release@v2
-      if: startsWith(github.ref, 'refs/tags/')
       with:
         files: ${{ matrix.artifact_name }}/${{ matrix.asset_name }}
+        token: ${{ secrets.USER_TOKEN }}
