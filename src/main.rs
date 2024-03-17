@@ -136,15 +136,26 @@ fn main() {
     let script_content: String = (|| {
         if is_url(&data) {
             // Send a GET request to the URL
-            let mut response = isahc::get(data).expect("Unable to retrieve data from URL");
-
-            if response.status().is_success() {
-                // Retrieve the response body as a string
-                let body = response.text().expect("Invalid string type");
-                body
-            } else {
-                eprintln!("Request failed with status code: {}", response.status());
-                exit(1);
+            match isahc::get(data) {
+                Ok(mut response) => {
+                    if response.status().is_success() {
+                        // Retrieve the response body as a string
+                        match response.text() {
+                            Ok(body) => body,
+                            Err(_) => {
+                                eprintln!("Invalid string type!");
+                                exit(1);
+                            }
+                        }
+                    } else {
+                        eprintln!("Request failed with status code: {}", response.status());
+                        exit(1);
+                    }
+                }
+                Err(_) => {
+                    eprintln!("Unable to retrieve data from URL!");
+                    exit(1);
+                }
             }
         } else {
             match fs::read_to_string(data) {

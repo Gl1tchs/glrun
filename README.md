@@ -38,3 +38,10 @@ OPTIONS:
     -v, --validate    Validate the script only, don't execute it
     -y, --yes         Do not ask for confirmation before running the script
 ```
+
+## Installation
+
+You can simply install the application using cargo:
+```
+cargo install glrun
+```
