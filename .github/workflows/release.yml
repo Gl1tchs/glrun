@@ -18,15 +18,15 @@ jobs:
           - name: linux
             os: ubuntu-latest
             artifact_name: target/release/glrun
-            asset_name: glrun-linux
+            asset_name: target/release/glrun-linux
           - name: windows
             os: windows-latest
             artifact_name: target/release/glrun.exe
-            asset_name: glrun-windows
+            asset_name: target/release/glrun-windows.exe
           - name: macos
             os: macos-latest
             artifact_name: target/release/glrun
-            asset_name: glrun-macos
+            asset_name: target/release/glrun-macos
 
     steps:
     - uses: actions/checkout@v2
@@ -38,9 +38,13 @@ jobs:
     - name: Build
       run: cargo build --release --locked
 
+    - name: Rename
+      run: mv ${{ matrix.artifact_name }} ${{ matrix.asset_name }} 
+
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ github.ref_name }}
-        files: ${{ matrix.artifact_name }}/${{ matrix.asset_name }}
+        name: Release ${{ github.ref }}
+        files: ${{ matrix.asset_name }}
         token: ${{ secrets.USER_TOKEN }}
