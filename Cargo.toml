@@ -1,0 +1,18 @@
+[package]
+name = "grun"
+description = "cross platform cmd scripts"
+readme = "README.md"
+license = "MIT"
+license-file = "LICENSE"
+repository = "https://github.com/Gl1tchs/grun"
+keywords = ["cli", "http-request", "automation"]
+categories = ["command-line-utilities"]
+authors = ["Berke Umut Biricik <berkeumtbiricik@gmail.com>"]
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+url = "2.2.2"
+clap = "3.1.4"
+colored = "2.0.0"
+isahc = "1.7.2"
