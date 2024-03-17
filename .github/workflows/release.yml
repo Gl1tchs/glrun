@@ -41,6 +41,6 @@ jobs:
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ github.ref }}
+        tag_name: ${{ github.ref_name }}
         files: ${{ matrix.artifact_name }}/${{ matrix.asset_name }}
         token: ${{ secrets.USER_TOKEN }}
