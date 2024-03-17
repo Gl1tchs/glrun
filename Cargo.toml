@@ -8,11 +8,11 @@ repository = "https://github.com/Gl1tchs/glrun"
 keywords = ["cli", "http-request", "automation"]
 categories = ["command-line-utilities"]
 authors = ["Berke Umut Biricik <berkeumtbiricik@gmail.com>"]
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 
 [dependencies]
 url = "2.2.2"
-clap = "3.1.4"
+clap = { version ="4.5.3", features = ["derive"] }
 colored = "2.1.0"
 isahc = "1.7.2"

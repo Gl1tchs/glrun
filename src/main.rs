@@ -4,7 +4,7 @@ use std::fs;
 use std::io::prelude::*;
 use std::process::exit;
 
-use clap::{App, Arg};
+use clap::Parser;
 use colored::Colorize;
 use isahc::prelude::*;
 use url::Url;
@@ -18,32 +18,37 @@ fn is_url(s: &str) -> bool {
     }
 }
 
-fn main() {
-    let matches = App::new("glrun")
-        .about("Cross-Platform script command runner.")
-        .arg(
-            Arg::with_name("validate")
-                .short('v')
-                .long("validate")
-                .help("Validate the script only, don't execute it"),
-        )
-        .arg(
-            Arg::with_name("no_confirm")
-                .short('y')
-                .long("yes")
-                .help("Do not ask for confirmation before running the script"),
-        )
-        .arg(
-            Arg::with_name("script")
-                .help("Sets the script file or URL to use")
-                .required(true)
-                .index(1),
-        )
-        .get_matches();
+#[derive(Parser, Debug)]
+#[clap(
+    name = "glrun",
+    about = "Cross-Platform script command runner.",
+    version
+)]
+struct Args {
+    #[clap(help = "Sets the script file or URL to use", required = true)]
+    script: String,
 
-    let validation_only = matches.is_present("validate");
-    let no_confirm = matches.is_present("no_confirm");
-    let data = matches.value_of("script").unwrap();
+    #[clap(
+        short = 'v',
+        long = "validate",
+        help = "Validate the script only, don't execute it"
+    )]
+    validate: bool,
+
+    #[clap(
+        short = 'y',
+        long = "yes",
+        help = "Do not ask for confirmation before running the script"
+    )]
+    no_confirm: bool,
+}
+
+fn main() {
+    let args = Args::parse();
+
+    let validation_only = args.validate;
+    let no_confirm = args.no_confirm;
+    let data = args.script;
 
     let script_content: String = (|| {
         if is_url(&data) {
