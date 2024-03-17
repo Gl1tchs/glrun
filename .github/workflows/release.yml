@@ -28,7 +28,7 @@ jobs:
             asset_name: glrun-macos
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
       with:
         profile: minimal
@@ -37,8 +37,26 @@ jobs:
     - name: Build
       run: cargo build --release --locked
 
-    - name: Upload binaries to release
-      uses: actions/upload-artifact@v2
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.USER_TOKEN }}
       with:
-        name: ${{ matrix.asset_name }}
-        path: ${{ matrix.artifact_name }}
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.USER_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ matrix.artifact_name }}
+        asset_name: ${{ matrix.asset_name }}
+        asset_content_type: application/octet-stream
