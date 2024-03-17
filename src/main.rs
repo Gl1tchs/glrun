@@ -1,103 +1,15 @@
+mod script;
+
 use std::fs;
 use std::io::prelude::*;
-use std::process::Command;
-use std::{env::consts::OS, process::exit};
+use std::process::exit;
 
 use clap::{App, Arg};
-use colored::*;
+use colored::Colorize;
 use isahc::prelude::*;
 use url::Url;
 
-struct Script {
-    commands: Vec<String>,
-}
-
-impl Script {
-    fn new(source: &str) -> Script {
-        let mut commands = Vec::new();
-        Script::parse_script(source, &mut commands);
-        Script { commands }
-    }
-
-    fn parse_script(source: &str, commands: &mut Vec<String>) {
-        let mut valid_os = false;
-        let mut multi_command = Vec::new();
-        let mut multi_command_entered = false;
-
-        for line in source.lines() {
-            if line.starts_with('#') {
-                continue;
-            } else if line.starts_with('@') {
-                let current_os = line[1..].trim().to_lowercase();
-                if current_os == OS {
-                    valid_os = true;
-                }
-            } else if valid_os && line.starts_with("--") {
-                multi_command_entered = !multi_command_entered;
-                if multi_command_entered {
-                    multi_command.push(
-                        if OS == "linux" || OS == "macos" {
-                            "bash -c '"
-                        } else {
-                            "cmd /c '"
-                        }
-                        .to_string(),
-                    );
-                } else {
-                    multi_command.push("'".to_string());
-                    commands.push(multi_command.join("\n"));
-                    multi_command.clear();
-                }
-            } else if valid_os && line.starts_with("-") {
-                commands.push(line[1..].trim().to_string());
-            } else if multi_command_entered {
-                multi_command.push(line.to_string());
-            }
-        }
-
-        if !valid_os {
-            eprintln!(
-                "{}",
-                "Given script does not contain proper steps for your operation system.".red()
-            );
-            std::process::exit(1);
-        }
-    }
-
-    fn execute(&self) {
-        for command in &self.commands {
-            let current_command = Some(command.clone());
-            match Command::new("sh").arg("-c").arg(command).output() {
-                Ok(output) => {
-                    if !output.status.success() {
-                        eprintln!(
-                            "{}",
-                            format!(
-                                "Error while running command below:\n{}",
-                                current_command.unwrap()
-                            )
-                            .red()
-                        );
-                    } else {
-                        // Print the output if you want to
-                        print!("{}", String::from_utf8_lossy(&output.stdout));
-                    }
-                }
-                Err(e) => {
-                    eprintln!(
-                        "{}",
-                        format!(
-                            "Error while running command below:\n{}",
-                            current_command.unwrap()
-                        )
-                        .red()
-                    );
-                    eprintln!("{}", e);
-                }
-            }
-        }
-    }
-}
+use script::Script;
 
 fn is_url(s: &str) -> bool {
     match Url::parse(s) {
@@ -143,17 +55,20 @@ fn main() {
                         match response.text() {
                             Ok(body) => body,
                             Err(_) => {
-                                eprintln!("Invalid string type!");
+                                eprintln!("{}", "Invalid string type!".red());
                                 exit(1);
                             }
                         }
                     } else {
-                        eprintln!("Request failed with status code: {}", response.status());
+                        eprintln!(
+                            "{}",
+                            format!("Request failed with status code: {}", response.status()).red()
+                        );
                         exit(1);
                     }
                 }
                 Err(_) => {
-                    eprintln!("Unable to retrieve data from URL!");
+                    eprintln!("{}", "Unable to retrieve data from URL!".red());
                     exit(1);
                 }
             }
@@ -175,9 +90,14 @@ fn main() {
             script.execute();
         } else {
             for command in &script.commands {
-                println!("{}", command);
+                println!("{}", command.blue());
             }
-            print!("Are you sure to run the script above (y | n): ");
+            print!(
+                "{}",
+                "Are you sure to run the script above (y | n): "
+                    .green()
+                    .bold()
+            );
             std::io::stdout().flush().unwrap();
             let mut ans = String::new();
             std::io::stdin().read_line(&mut ans).unwrap();

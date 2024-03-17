@@ -14,5 +14,5 @@ edition = "2021"
 [dependencies]
 url = "2.2.2"
 clap = "3.1.4"
-colored = "2.0.0"
+colored = "2.1.0"
 isahc = "1.7.2"

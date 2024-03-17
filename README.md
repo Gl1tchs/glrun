@@ -41,7 +41,7 @@ OPTIONS:
 
 ## Installation
 
-You can simply install the application using cargo:
+You can simply install the application using [cargo](https://www.rust-lang.org/learn/get-started):
 ```
 cargo install glrun
 ```
