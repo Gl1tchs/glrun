@@ -107,7 +107,7 @@ fn is_url(s: &str) -> bool {
 }
 
 fn main() {
-    let matches = App::new("grun")
+    let matches = App::new("glrun")
         .about("Cross-Platform script command runner.")
         .arg(
             Arg::with_name("validate")

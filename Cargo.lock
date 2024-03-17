@@ -207,7 +207,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "grun"
+name = "glrun"
 version = "0.1.0"
 dependencies = [
  "clap",

@@ -1,5 +1,5 @@
 [package]
-name = "grun"
+name = "glrun"
 description = "cross platform cmd scripts"
 readme = "README.md"
 license = "MIT"

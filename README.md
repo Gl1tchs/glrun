@@ -1,4 +1,4 @@
-# grun
+# glrun
 
 Command line utility for cross platform scripts.
 
@@ -18,17 +18,17 @@ echo 'world'
 ```
 
 ```
-grun script.gs
+glrun script.gs
 ```
 
 ## Usage:
 ```
-gl1tch in ~/Projects/grun λ grun --help
+gl1tch in ~/Projects/glrun λ glrun --help
 
 Cross-Platform script command runner.
 
 USAGE:
-    grun [OPTIONS] <script>
+    glrun [OPTIONS] <script>
 
 ARGS:
     <script>    Sets the script file or URL to use
