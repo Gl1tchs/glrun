@@ -3,8 +3,6 @@ on:
   push:
     tags:
       - '*'
-    branches:
-      - master
 
 jobs:
   publish:
@@ -29,6 +27,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Get tag name
+      id: tag_name
+      run: echo ::set-output name=TAG_NAME::$(echo "${GITHUB_REF/refs\/tags\//}")
+
+    - name: Check if tag is valid
+      if: startsWith(github.ref, 'refs/tags/')
+      run: echo "Tag is valid"
+      else: echo "Tag is not valid"; exit 1
+
     - uses: actions-rs/toolchain@v1
       with:
         profile: minimal
@@ -41,12 +49,12 @@ jobs:
       id: create_release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.USER_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ steps.tag_name.outputs.TAG_NAME }}
+        release_name: Release ${{ steps.tag_name.outputs.TAG_NAME }}
         body: |
-          Release ${{ github.ref }}
+          Release ${{ steps.tag_name.outputs.TAG_NAME }}
         draft: false
         prerelease: false
 
@@ -54,7 +62,7 @@ jobs:
       id: upload-release-asset
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.USER_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ${{ matrix.artifact_name }}
