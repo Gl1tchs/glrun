@@ -98,7 +98,11 @@ impl Script {
     pub fn execute(&self) {
         for command in &self.commands {
             let current_command = Some(command.clone());
-            match Command::new("sh").arg("-c").arg(command).output() {
+            match Command::new(if cfg!(windows) { "cmd" } else { "sh" })
+                .arg(if cfg!(windows) { "/c" } else { "-c" })
+                .arg(command)
+                .output()
+            {
                 Ok(output) => {
                     if !output.status.success() {
                         eprintln!(
